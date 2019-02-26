@@ -43,6 +43,10 @@ Alternatively, run timestream.py with additional arguments --rate and/or
 starts a stream at 100 Hz, using default chunk size 32.
 """
 
+"""
+2019-02-26 0.1.0 First version
+"""
+
 
 from pylsl import StreamOutlet, StreamInfo
 from random import choice
