@@ -27,9 +27,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Broadcasts an LSL stream of time stamps, in two channels.
 
 Channel 1: Time in seconds taken from Python's time.time().
-Channel 2: Calculated time in seconds between the current and 
+Channel 2: Calculated time in seconds between the current and
            previous submitted sample.
-           
+
 Usage:
 Make sure to have pylsl installed; execute 'pip install pylsl' or see:
 https://github.com/labstreaminglayer/liblsl-Python
@@ -70,22 +70,22 @@ def main(ratehz, chunksize):
 
     try:
         print 'Broadcasting time stamps at', ratehz, 'Hz in chunks of', chunksize
-        
+
         delta = (1.0/ratehz)
-        previoustime = clock()        
+        previoustime = clock()
         while True:
             # awaiting next point in time to send data
             nexttime = previoustime + delta
             while clock() < nexttime: pass
             delay = clock() - previoustime
             previoustime = nexttime
-            
+
             # sending data
             outlet.push_sample([time(), delay])
     except KeyboardInterrupt:
         print 'Interrupted'
 
-        
+
 if __name__ == "__main__":
     # defaults
     rate = 100
@@ -95,13 +95,13 @@ if __name__ == "__main__":
     if len(argv) == 1:
         print 'Sampling rate in Hz:'
         rate = int(raw_input('> ') or rate)
-        
+
         print 'Chunk size:'
         chunksize = int(raw_input('> ') or chunksize)
     else:
         if('--rate' in argv):
             rate = int(argv[argv.index('--rate') + 1])
-            
+
         if('--chunksize' in argv):
             chunksize = int(argv[argv.index('--chunksize') + 1])
 
