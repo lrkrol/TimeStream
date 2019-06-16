@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-TimeStream 0.1.0
+TimeStream 0.1.1
 
 Copyright 2019 Laurens R Krol
 
@@ -44,10 +44,13 @@ starts a stream at 100 Hz, using default chunk size 32.
 """
 
 """
+2019-06-16 lrk
+- Updated the timer to use either clock() or time() depending on the OS
 2019-02-26 0.1.0 First version
 """
 
 
+from os import name as osname
 from pylsl import StreamOutlet, StreamInfo
 from random import choice
 from string import ascii_lowercase
@@ -56,6 +59,12 @@ from time import clock, time
 
 
 def main(ratehz, chunksize):
+    # setting up default timer: time.clock() is most accurate, on unix, time.time() is
+    if osname == 'nt':
+        timer = clock
+    elif osname == 'posix':
+        timer = time
+    
     # setting up stream info and metadata
     id = 'TimeStamps-' + ''.join(choice(ascii_lowercase) for _ in range(8))
     info = StreamInfo('Time Stamps', 'Time', 2, ratehz, 'double64', id)
@@ -76,12 +85,12 @@ def main(ratehz, chunksize):
         print 'Broadcasting time stamps at', ratehz, 'Hz in chunks of', chunksize
 
         delta = (1.0/ratehz)
-        previoustime = clock()
+        previoustime = timer()
         while True:
             # awaiting next point in time to send data
             nexttime = previoustime + delta
-            while clock() < nexttime: pass
-            delay = clock() - previoustime
+            while timer() < nexttime: pass
+            delay = timer() - previoustime
             previoustime = nexttime
 
             # sending data
